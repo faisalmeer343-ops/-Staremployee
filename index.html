@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Star of The Square Services Co. - EMS v2</title>
-<!-- Libraries CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -17,8 +16,6 @@
     --bg:#f1f5f9; --card:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
   }
   body { background:var(--bg); color:var(--text); font-size:14px; }
-
-  /* Arabic RTL */
   body.rtl { direction:rtl; }
   body.rtl .sidebar { right:0; left:auto; }
   body.rtl .main { margin-right:240px; margin-left:0; }
@@ -26,7 +23,6 @@
   body.rtl .sidebar a.active { border-right-color:var(--accent); }
   body.rtl th, body.rtl td { text-align:right; }
 
-  /* ===== LOGIN ===== */
   #loginScreen {
     display:flex; align-items:center; justify-content:center; height:100vh;
     background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%);
@@ -48,7 +44,6 @@
   .login-box button:hover { background:var(--primary-light); }
   .hint { font-size:11px; color:var(--muted); text-align:center; margin-top:12px; }
 
-  /* ===== LAYOUT ===== */
   #app { display:none; }
   .layout { display:flex; min-height:100vh; }
   .sidebar {
@@ -95,7 +90,6 @@
     padding:8px 14px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;
   }
 
-  /* ===== STATS ===== */
   .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
   .stat-card {
     background:#fff; padding:18px; border-radius:12px;
@@ -105,7 +99,6 @@
   .stat-card .value { font-size:24px; font-weight:700; margin-top:6px; color:var(--primary); }
   .stat-card .sub { font-size:11px; color:var(--muted); margin-top:4px; }
 
-  /* ===== CARDS & TABLES ===== */
   .card {
     background:#fff; border-radius:12px; padding:20px;
     box-shadow:0 1px 4px rgba(0,0,0,0.06); margin-bottom:20px;
@@ -125,7 +118,6 @@
   .badge.yellow { background:#fef3c7; color:#92400e; }
   .badge.blue { background:#dbeafe; color:#1e40af; }
 
-  /* ===== BUTTONS ===== */
   .btn {
     padding:9px 16px; border:none; border-radius:8px;
     font-size:13px; font-weight:600; cursor:pointer; transition:0.2s;
@@ -138,7 +130,6 @@
   .btn-sm { padding:5px 10px; font-size:12px; }
   .btn-outline { background:#fff; border:1px solid var(--border); color:var(--text); }
 
-  /* ===== MODAL ===== */
   .modal-overlay {
     position:fixed; inset:0; background:rgba(0,0,0,0.5);
     display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
@@ -162,7 +153,6 @@
   .form-group input:focus, .form-group select:focus { outline:none; border-color:var(--primary-light); }
   .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
 
-  /* ===== SECTION ===== */
   .section { display:none; }
   .section.active { display:block; }
   .search-bar { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
@@ -172,7 +162,6 @@
   }
   .search-bar input { flex:1; min-width:200px; }
 
-  /* ===== PHOTO UPLOAD ===== */
   .photo-upload {
     display:flex; flex-direction:column; align-items:center; gap:10px;
     padding:16px; border:2px dashed var(--border); border-radius:12px; cursor:pointer;
@@ -188,7 +177,6 @@
     color:var(--muted); font-size:32px;
   }
 
-  /* ===== ATTENDANCE ===== */
   .checkin-panel {
     display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;
   }
@@ -205,10 +193,8 @@
   }
   .checkin-card button:hover { background:rgba(255,255,255,0.3); }
 
-  /* ===== CHART ===== */
   .chart-container { position:relative; height:300px; }
 
-  /* ===== TOAST ===== */
   .toast {
     position:fixed; top:20px; right:20px; background:var(--success); color:#fff;
     padding:14px 20px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
@@ -219,7 +205,6 @@
   .toast.show { transform:translateX(0); }
   .toast.error { background:var(--danger); }
 
-  /* ===== PAYSLIP ===== */
   .payslip {
     background:#fff; padding:30px; border-radius:12px; max-width:800px;
     margin:0 auto; color:#1e293b;
@@ -235,7 +220,6 @@
   .payslip-table th { background:#f8fafc; }
   .payslip-total { font-size:16px; font-weight:700; color:var(--primary); }
 
-  /* ===== RESPONSIVE ===== */
   @media (max-width:900px) {
     .sidebar { width:70px; }
     .sidebar .brand h2, .sidebar .brand small, .sidebar a span { display:none; }
@@ -424,16 +408,15 @@
         </div>
       </section>
 
-      <!-- PAYROLL (Enhanced with Month selection & summary) -->
+      <!-- PAYROLL -->
       <section id="payroll" class="section">
         <div class="card">
           <div class="card-header">
-            <h2>Monthly Payroll - <span id="payrollMonthDisplay"></span></h2>
+            <h2>Monthly Payroll - <span id="payrollMonth"></span></h2>
             <div style="display:flex; gap:8px; align-items:center;">
-              <select id="payrollMonthSelect" class="form-group" style="padding:8px; border-radius:8px; border:1px solid var(--border);">
-                <!-- options populated by JS -->
+              <select id="payrollMonthSelect" style="padding:9px 12px; border:1px solid var(--border); border-radius:8px; font-size:13px;">
               </select>
-              <button class="btn btn-primary" onclick="generatePayrollForMonth()" data-en="⚙️ Generate for Month" data-ar="⚙️ إنشاء للشهر">⚙️ Generate for Month</button>
+              <button class="btn btn-primary" onclick="generatePayrollForMonth()" data-en="⚙️ Generate" data-ar="⚙️ إنشاء">⚙️ Generate</button>
             </div>
           </div>
           <table>
@@ -445,17 +428,20 @@
           </table>
         </div>
 
-        <!-- NEW: Employee Salary Summary -->
+        <!-- Employee Salary Summary (NEW) -->
         <div class="card">
           <div class="card-header">
             <h2 data-en="Employee Salary Summary" data-ar="ملخص رواتب الموظفين">Employee Salary Summary</h2>
-            <button class="btn btn-success" onclick="exportSalarySummaryExcel()" data-en="⬇️ Excel" data-ar="⬇️ تصدير">⬇️ Excel</button>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-success" onclick="exportSalarySummaryExcel()" data-en="⬇️ Excel" data-ar="⬇️ تصدير">⬇️ Excel</button>
+              <button class="btn btn-danger" onclick="downloadAllSalarySummaryPDF()" data-en="📄 Full PDF" data-ar="📄 تقرير PDF">📄 Full PDF</button>
+            </div>
           </div>
           <table>
             <thead><tr>
               <th>Employee</th><th>Designation</th><th>Joining Date</th>
-              <th>Current Basic</th><th>Total Earned</th><th>Total Deductions</th>
-              <th>Total Advances</th><th>Remaining Advance</th><th>Net Paid (after adv)</th>
+              <th>Current Basic</th><th>Total Earned</th><th>Deductions</th>
+              <th>Total Advances</th><th>Remaining</th><th>Net Paid</th><th>History</th>
             </tr></thead>
             <tbody id="salarySummaryTable"></tbody>
           </table>
@@ -635,7 +621,6 @@ function seedData() {
     { id:1, empId:1, type:'Iqama', expiry:'2026-10-15' },
     { id:2, empId:2, type:'Passport', expiry:'2026-03-20' }
   ];
-  // Seed some payroll for previous months to show trend
   DB.payroll = [
     { id: 101, empId:1, month:'2025-11', basic:14000, housing:5000, transport:1500, other:1000, overtime:0, deductions:0, net:21500 },
     { id: 102, empId:2, month:'2025-11', basic:10000, housing:3000, transport:1000, other:500, overtime:0, deductions:0, net:14500 },
@@ -674,7 +659,7 @@ function logout() {
 }
 
 /* ============================================================
-   LANGUAGE TOGGLE
+   LANGUAGE
    ============================================================ */
 function toggleLang() {
   DB.lang = DB.lang === 'en' ? 'ar' : 'en';
@@ -688,11 +673,9 @@ function applyLang() {
   document.body.classList.toggle('rtl', isAr);
   document.getElementById('htmlRoot').lang = isAr ? 'ar' : 'en';
   document.getElementById('langLabel').textContent = isAr ? '🌐 English' : '🌐 العربية';
-
   document.querySelectorAll('[data-en]').forEach(el => {
     el.textContent = isAr ? el.dataset.ar : el.dataset.en;
   });
-
   const active = document.querySelector('.nav-link.active');
   if (active) {
     const span = active.querySelector('span');
@@ -701,7 +684,7 @@ function applyLang() {
 }
 
 /* ============================================================
-   NAVIGATION
+   NAV
    ============================================================ */
 document.querySelectorAll('.nav-link').forEach(link => {
   link.addEventListener('click', () => {
@@ -725,10 +708,6 @@ function empName(id) {
   const e = DB.employees.find(x => x.id === id);
   return e ? e.name : 'Unknown';
 }
-function empPhoto(id) {
-  const e = DB.employees.find(x => x.id === id);
-  return e && e.photo ? e.photo : '';
-}
 function toast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -745,7 +724,7 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
 });
 
 /* ============================================================
-   LIVE CLOCK
+   CLOCK
    ============================================================ */
 function startClock() {
   setInterval(() => {
@@ -761,19 +740,15 @@ function startClock() {
 function renderDashboard() {
   const active = DB.employees.filter(e => e.status === 'Active');
   document.getElementById('statEmployees').textContent = active.length;
-
   const payroll = active.reduce((sum, e) =>
     sum + Number(e.basic) + Number(e.housing) + Number(e.transport) + Number(e.other), 0);
   document.getElementById('statPayroll').textContent = fmt(payroll);
-
   const adv = DB.advances.filter(a => a.status === 'Active')
     .reduce((s, a) => s + Number(a.remaining), 0);
   document.getElementById('statAdvances').textContent = fmt(adv);
-
   const exp = DB.expenses.filter(e => e.status === 'Pending')
     .reduce((s, e) => s + Number(e.amount), 0);
   document.getElementById('statExpenses').textContent = fmt(exp);
-
   const today = new Date();
   const in30 = new Date(); in30.setDate(today.getDate() + 30);
   const expDocs = DB.documents.filter(d => {
@@ -781,11 +756,9 @@ function renderDashboard() {
     return d1 >= today && d1 <= in30;
   });
   document.getElementById('statDocs').textContent = expDocs.length;
-
   const todayStr = today.toISOString().split('T')[0];
   const present = DB.attendance.filter(a => a.date === todayStr && a.checkIn).length;
   document.getElementById('statPresent').textContent = present;
-
   const recent = [...DB.employees].slice(-5).reverse();
   document.getElementById('recentEmployees').innerHTML = recent.map(e => `
     <tr>
@@ -795,7 +768,6 @@ function renderDashboard() {
       <td><span class="badge ${e.status === 'Active' ? 'green' : 'red'}">${e.status}</span></td>
     </tr>
   `).join('') || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">No employees</td></tr>';
-
   renderPayrollChart();
 }
 
@@ -806,7 +778,6 @@ let payrollChart = null;
 function renderPayrollChart() {
   const ctx = document.getElementById('payrollChart');
   if (!ctx) return;
-
   const months = [];
   const totals = [];
   for (let i = 5; i >= 0; i--) {
@@ -819,7 +790,6 @@ function renderPayrollChart() {
     totals.push(total || (i === 0 ? DB.employees.filter(e => e.status === 'Active')
       .reduce((s, e) => s + e.basic + e.housing + e.transport + e.other, 0) : 0));
   }
-
   if (payrollChart) payrollChart.destroy();
   payrollChart = new Chart(ctx, {
     type: 'line',
@@ -855,7 +825,6 @@ function renderEmployees() {
       e.code.toLowerCase().includes(q) || e.department.toLowerCase().includes(q);
     return matchQ && (!dept || e.department === dept);
   });
-
   document.getElementById('employeesTable').innerHTML = list.map(e => {
     const photo = e.photo
       ? `<img src="${e.photo}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`
@@ -872,6 +841,7 @@ function renderEmployees() {
         <td>
           <button class="btn btn-outline btn-sm" onclick="viewEmployee(${e.id})">👁️</button>
           <button class="btn btn-primary btn-sm" onclick="openEmployeeModal(${e.id})">✏️</button>
+          <button class="btn btn-warning btn-sm" onclick="downloadEmployeeHistoryPDF(${e.id})">📄</button>
           <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${e.id})">🗑️</button>
         </td>
       </tr>
@@ -879,9 +849,6 @@ function renderEmployees() {
   }).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8;">No employees</td></tr>';
 }
 
-/* ============================================================
-   EMPLOYEE MODAL WITH PHOTO UPLOAD
-   ============================================================ */
 let tempPhoto = '';
 function openEmployeeModal(id = null) {
   const e = id ? DB.employees.find(x => x.id === id) : {};
@@ -969,7 +936,6 @@ function saveEmployee(id) {
     status: document.getElementById('f_status').value
   };
   if (!data.name || !data.code) return toast('Name and Code required', 'error');
-
   if (id) {
     const idx = DB.employees.findIndex(x => x.id === id);
     DB.employees[idx] = { ...DB.employees[idx], ...data };
@@ -1015,6 +981,7 @@ function viewEmployee(id) {
     </table>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal()">Close</button>
+      <button class="btn btn-warning" onclick="closeModal(); downloadEmployeeHistoryPDF(${e.id})">📄 History PDF</button>
       <button class="btn btn-primary" onclick="closeModal(); openEmployeeModal(${e.id})">Edit</button>
     </div>
   `);
@@ -1028,7 +995,6 @@ function checkIn() {
   const now = new Date().toLocaleTimeString();
   const existing = DB.attendance.find(a => a.date === today && a.empId === 1);
   if (existing && existing.checkIn) return toast('Already checked in today', 'error');
-
   DB.attendance.push({
     id: Date.now(), empId: 1, date: today,
     checkIn: now, checkOut: '', hours: 0, status: 'Present'
@@ -1044,7 +1010,6 @@ function checkOut() {
   const now = new Date().toLocaleTimeString();
   const rec = DB.attendance.find(a => a.date === today && a.empId === 1 && !a.checkOut);
   if (!rec) return toast('Please check in first', 'error');
-
   rec.checkOut = now;
   const start = new Date(`1970-01-01 ${rec.checkIn}`);
   const end = new Date(`1970-01-01 ${now}`);
@@ -1070,10 +1035,8 @@ function renderAttendance() {
 }
 
 /* ============================================================
-   PAYROLL + SALARY SUMMARY (Enhanced)
+   PAYROLL + SALARY SUMMARY
    ============================================================ */
-
-// Populate month selector
 function populatePayrollMonthSelect() {
   const select = document.getElementById('payrollMonthSelect');
   if (!select) return;
@@ -1083,18 +1046,15 @@ function populatePayrollMonthSelect() {
     d.setMonth(d.getMonth() - i);
     months.push(d.toISOString().slice(0, 7));
   }
-  // Also include any month present in payroll not in last 18
   DB.payroll.forEach(p => { if (!months.includes(p.month)) months.push(p.month); });
   months.sort().reverse();
   const currentVal = select.value || new Date().toISOString().slice(0, 7);
   select.innerHTML = months.map(m => `<option value="${m}" ${m === currentVal ? 'selected' : ''}>${m}</option>`).join('');
 }
 
-// Render payroll table based on selected month
 function renderPayroll() {
   const selectedMonth = document.getElementById('payrollMonthSelect')?.value || new Date().toISOString().slice(0, 7);
-  document.getElementById('payrollMonthDisplay').textContent = selectedMonth;
-
+  document.getElementById('payrollMonth').textContent = selectedMonth;
   const rows = DB.payroll.filter(p => p.month === selectedMonth);
   document.getElementById('payrollTable').innerHTML = rows.map(p => `
     <tr>
@@ -1110,12 +1070,9 @@ function renderPayroll() {
       </td>
     </tr>
   `).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8;">No payroll for this month. Click Generate.</td></tr>';
-
-  // Also render salary summary
   renderSalarySummary();
 }
 
-// Generate payroll for selected month (with carry-over of previous unpaid months)
 function generatePayrollForMonth() {
   const month = document.getElementById('payrollMonthSelect').value;
   if (!month) return toast('Select a month', 'error');
@@ -1123,27 +1080,16 @@ function generatePayrollForMonth() {
 }
 
 function generatePayrollForMonthInternal(month) {
-  // Remove existing entries for this month
   DB.payroll = DB.payroll.filter(p => p.month !== month);
-
   DB.employees.filter(e => e.status === 'Active').forEach(e => {
-    // Standard monthly components
     let basic = Number(e.basic);
     let housing = Number(e.housing);
     let transport = Number(e.transport);
     let other = Number(e.other);
     let overtime = 0;
-
-    // Calculate advance deduction for this month
     const adv = DB.advances.find(a => a.empId === e.id && a.status === 'Active');
     let deductions = adv ? Number(adv.monthlyDed) : 0;
-
-    // Optional: Carry over unpaid previous month net? Not needed for basic generation.
-    // Instead, we ensure advance deduction reduces remaining.
-
-    // Net for this month
     let net = basic + housing + transport + other + overtime - deductions;
-
     DB.payroll.push({
       id: Date.now() + e.id + Math.random() * 1000,
       empId: e.id,
@@ -1151,21 +1097,17 @@ function generatePayrollForMonthInternal(month) {
       basic, housing, transport, other, overtime, deductions,
       net
     });
-
-    // Deduct from advance remaining (simulate payment)
     if (adv) {
       adv.remaining = Math.max(0, adv.remaining - adv.monthlyDed);
       if (adv.remaining === 0) adv.status = 'Closed';
     }
   });
-
   save();
   toast('Payroll generated for ' + month);
   renderAll();
   populatePayrollMonthSelect();
 }
 
-// Original generatePayroll (for current month) – kept for compatibility
 function generatePayroll(silent = false) {
   const month = new Date().toISOString().slice(0, 7);
   generatePayrollForMonthInternal(month);
@@ -1173,12 +1115,11 @@ function generatePayroll(silent = false) {
 }
 
 /* ============================================================
-   SALARY SUMMARY (Employee-wise totals)
+   SALARY SUMMARY
    ============================================================ */
 function renderSalarySummary() {
   const tbody = document.getElementById('salarySummaryTable');
   if (!tbody) return;
-
   const summary = DB.employees.map(emp => {
     const empPayrolls = DB.payroll.filter(p => p.empId === emp.id);
     const totalEarned = empPayrolls.reduce((sum, p) => sum + p.net, 0);
@@ -1186,10 +1127,6 @@ function renderSalarySummary() {
     const totalAdvances = DB.advances.filter(a => a.empId === emp.id).reduce((sum, a) => sum + a.amount, 0);
     const remainingAdvance = DB.advances.filter(a => a.empId === emp.id && a.status === 'Active')
       .reduce((sum, a) => sum + a.remaining, 0);
-    const netPaid = totalEarned; // net already after deductions
-    // "kitni salary utha chuka" = total net paid through payroll
-    // "kitni baqyajat" = remaining advance
-    // "company par kitna qarza" = total outstanding advances (remaining)
     return {
       id: emp.id,
       name: emp.name,
@@ -1200,10 +1137,9 @@ function renderSalarySummary() {
       totalDeductions,
       totalAdvances,
       remainingAdvance,
-      netPaid
+      netPaid: totalEarned
     };
   });
-
   tbody.innerHTML = summary.map(s => `
     <tr>
       <td><strong>${s.name}</strong></td>
@@ -1215,8 +1151,11 @@ function renderSalarySummary() {
       <td>${fmt(s.totalAdvances)}</td>
       <td style="color:${s.remainingAdvance > 0 ? 'var(--warning)' : 'var(--success)'}">${fmt(s.remainingAdvance)}</td>
       <td><strong>${fmt(s.netPaid)}</strong></td>
+      <td>
+        <button class="btn btn-warning btn-sm" onclick="downloadEmployeeHistoryPDF(${s.id})">📄 History</button>
+      </td>
     </tr>
-  `).join('') || '<tr><td colspan="9" style="text-align:center;color:#94a3b8;">No data</td></tr>';
+  `).join('') || '<tr><td colspan="10" style="text-align:center;color:#94a3b8;">No data</td></tr>';
 }
 
 function exportSalarySummaryExcel() {
@@ -1232,7 +1171,7 @@ function exportSalarySummaryExcel() {
       Designation: emp.designation,
       'Joining Date': emp.joining,
       'Current Basic': emp.basic,
-      'Total Earned (Net)': totalEarned,
+      'Total Earned': totalEarned,
       'Total Deductions': totalDeductions,
       'Total Advances': totalAdvances,
       'Remaining Advance': remainingAdvance,
@@ -1247,7 +1186,351 @@ function exportSalarySummaryExcel() {
 }
 
 /* ============================================================
-   PAYSLIP PDF DOWNLOAD
+   EMPLOYEE HISTORY PDF
+   ============================================================ */
+function downloadEmployeeHistoryPDF(empId) {
+  const e = DB.employees.find(x => x.id === empId);
+  if (!e) return toast('Employee not found', 'error');
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+  const pageW = 210;
+  const margin = 14;
+  let y = 0;
+
+  doc.setFillColor(30, 58, 138);
+  doc.rect(0, 0, pageW, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'bold');
+  doc.text('Star of The Square Services Co.', pageW / 2, 12, { align: 'center' });
+  doc.setFontSize(9);
+  doc.setFont(undefined, 'normal');
+  doc.text('Employee Full History Report', pageW / 2, 20, { align: 'center' });
+  y = 36;
+
+  doc.setTextColor(30, 58, 138);
+  doc.setFontSize(13);
+  doc.setFont(undefined, 'bold');
+  doc.text('Employee Profile', margin, y);
+  y += 2;
+  doc.setDrawColor(30, 58, 138);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageW - margin, y);
+  y += 6;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(10);
+  const infoL = [
+    ['Employee Code:', e.code],
+    ['Name:', e.name],
+    ['Nationality:', e.nationality || '-'],
+    ['Designation:', e.designation || '-'],
+    ['Department:', e.department || '-'],
+    ['Joining Date:', e.joining || '-'],
+    ['Status:', e.status],
+  ];
+  const infoR = [
+    ['Mobile:', e.mobile || '-'],
+    ['Email:', e.email || '-'],
+    ['ID / Iqama:', e.idNo || '-'],
+    ['Bank IBAN:', e.bank || '-'],
+    ['Date of Birth:', e.dob || '-'],
+    ['Current Basic:', 'SAR ' + Number(e.basic).toLocaleString()],
+    ['Total Package:', 'SAR ' + Number(e.basic + e.housing + e.transport + e.other).toLocaleString()],
+  ];
+  infoL.forEach(([k, v], i) => {
+    doc.setFont(undefined, 'bold'); doc.text(k, margin, y + i * 6);
+    doc.setFont(undefined, 'normal'); doc.text(String(v), margin + 32, y + i * 6);
+  });
+  infoR.forEach(([k, v], i) => {
+    doc.setFont(undefined, 'bold'); doc.text(k, 110, y + i * 6);
+    doc.setFont(undefined, 'normal'); doc.text(String(v), 140, y + i * 6);
+  });
+  y += infoL.length * 6 + 6;
+
+  if (e.joining) {
+    const join = new Date(e.joining);
+    const now = new Date();
+    const diffDays = Math.floor((now - join) / 86400000);
+    const years = Math.floor(diffDays / 365);
+    const months = Math.floor((diffDays % 365) / 30);
+    doc.setFont(undefined, 'italic');
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Service Duration: ${years} year(s), ${months} month(s)  (since ${e.joining})`, margin, y);
+    y += 8;
+  }
+
+  // Increments
+  const increments = DB.increments.filter(i => i.empId === empId)
+    .sort((a,b) => new Date(a.date) - new Date(b.date));
+  y = sectionHeader(doc, 'Salary Increments', y, margin, pageW);
+  if (increments.length === 0) {
+    doc.setTextColor(120, 120, 120);
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(9);
+    doc.text('No increments recorded.', margin, y);
+    y += 8;
+  } else {
+    doc.setFillColor(241, 245, 249);
+    doc.rect(margin, y, pageW - margin * 2, 7, 'F');
+    doc.setTextColor(30, 58, 138);
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'bold');
+    doc.text('Date', margin + 2, y + 5);
+    doc.text('Old Salary', margin + 30, y + 5);
+    doc.text('Increment', margin + 65, y + 5);
+    doc.text('New Salary', margin + 100, y + 5);
+    doc.text('Reason', margin + 135, y + 5);
+    y += 9;
+    doc.setTextColor(30, 41, 59);
+    doc.setFont(undefined, 'normal');
+    increments.forEach(inc => {
+      doc.text(String(inc.date), margin + 2, y);
+      doc.text('SAR ' + Number(inc.oldSalary).toLocaleString(), margin + 30, y);
+      doc.text('+ SAR ' + Number(inc.amount).toLocaleString(), margin + 65, y);
+      doc.text('SAR ' + Number(inc.newSalary).toLocaleString(), margin + 100, y);
+      doc.text(String(inc.reason || '-').slice(0, 30), margin + 135, y);
+      y += 6;
+      if (y > 270) { doc.addPage(); y = 20; }
+    });
+    y += 4;
+  }
+
+  // Advances
+  const advances = DB.advances.filter(a => a.empId === empId);
+  y = sectionHeader(doc, 'Advances / Loans', y, margin, pageW);
+  if (advances.length === 0) {
+    doc.setTextColor(120, 120, 120);
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'normal');
+    doc.text('No advances taken.', margin, y);
+    y += 8;
+  } else {
+    doc.setFillColor(241, 245, 249);
+    doc.rect(margin, y, pageW - margin * 2, 7, 'F');
+    doc.setTextColor(30, 58, 138);
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'bold');
+    doc.text('Amount', margin + 2, y + 5);
+    doc.text('Installments', margin + 40, y + 5);
+    doc.text('Monthly', margin + 75, y + 5);
+    doc.text('Paid', margin + 105, y + 5);
+    doc.text('Remaining', margin + 135, y + 5);
+    doc.text('Status', margin + 168, y + 5);
+    y += 9;
+    doc.setTextColor(30, 41, 59);
+    doc.setFont(undefined, 'normal');
+    let totalAdv = 0, totalPaid = 0, totalRemaining = 0;
+    advances.forEach(a => {
+      const paid = Number(a.amount) - Number(a.remaining);
+      totalAdv += Number(a.amount);
+      totalPaid += paid;
+      totalRemaining += Number(a.remaining);
+      doc.text('SAR ' + Number(a.amount).toLocaleString(), margin + 2, y);
+      doc.text(String(a.installments), margin + 40, y);
+      doc.text('SAR ' + Number(a.monthlyDed).toLocaleString(), margin + 75, y);
+      doc.text('SAR ' + paid.toLocaleString(), margin + 105, y);
+      doc.text('SAR ' + Number(a.remaining).toLocaleString(), margin + 135, y);
+      doc.text(a.status, margin + 168, y);
+      y += 6;
+      if (y > 270) { doc.addPage(); y = 20; }
+    });
+    y += 2;
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(30, 58, 138);
+    doc.text(`Total Advances: SAR ${totalAdv.toLocaleString()}   |   Paid: SAR ${totalPaid.toLocaleString()}   |   Remaining: SAR ${totalRemaining.toLocaleString()}`, margin, y);
+    y += 8;
+  }
+
+  // Payroll history
+  const payrolls = DB.payroll.filter(p => p.empId === empId)
+    .sort((a,b) => a.month.localeCompare(b.month));
+  y = sectionHeader(doc, 'Payroll History (Salary Received)', y, margin, pageW);
+  if (payrolls.length === 0) {
+    doc.setTextColor(120, 120, 120);
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(9);
+    doc.text('No payroll records yet.', margin, y);
+    y += 8;
+  } else {
+    doc.setFillColor(241, 245, 249);
+    doc.rect(margin, y, pageW - margin * 2, 7, 'F');
+    doc.setTextColor(30, 58, 138);
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'bold');
+    doc.text('Month', margin + 2, y + 5);
+    doc.text('Basic', margin + 25, y + 5);
+    doc.text('Housing', margin + 50, y + 5);
+    doc.text('Transport', margin + 75, y + 5);
+    doc.text('Other', margin + 100, y + 5);
+    doc.text('Deduction', margin + 122, y + 5);
+    doc.text('Net Paid', margin + 150, y + 5);
+    y += 9;
+    doc.setTextColor(30, 41, 59);
+    doc.setFont(undefined, 'normal');
+    let totalNet = 0, totalDed = 0;
+    payrolls.forEach(p => {
+      totalNet += Number(p.net);
+      totalDed += Number(p.deductions);
+      doc.text(String(p.month), margin + 2, y);
+      doc.text(Number(p.basic).toLocaleString(), margin + 25, y);
+      doc.text(Number(p.housing).toLocaleString(), margin + 50, y);
+      doc.text(Number(p.transport).toLocaleString(), margin + 75, y);
+      doc.text(Number(p.other).toLocaleString(), margin + 100, y);
+      doc.text('-' + Number(p.deductions).toLocaleString(), margin + 122, y);
+      doc.text('SAR ' + Number(p.net).toLocaleString(), margin + 150, y);
+      y += 6;
+      if (y > 270) { doc.addPage(); y = 20; }
+    });
+    y += 4;
+    doc.setDrawColor(30, 58, 138);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(30, 58, 138);
+    doc.setFontSize(10);
+    doc.text(`Total Net Paid to Employee: SAR ${totalNet.toLocaleString()}`, margin, y);
+    y += 6;
+    doc.text(`Total Deductions Applied: SAR ${totalDed.toLocaleString()}`, margin, y);
+    y += 10;
+  }
+
+  // Financial summary
+  const totalEarned = payrolls.reduce((s, p) => s + Number(p.net), 0);
+  const totalAdvTaken = advances.reduce((s, a) => s + Number(a.amount), 0);
+  const totalAdvPaid = advances.reduce((s, a) => s + (Number(a.amount) - Number(a.remaining)), 0);
+  const remainingAdv = advances.reduce((s, a) => s + Number(a.remaining), 0);
+
+  if (y > 230) { doc.addPage(); y = 20; }
+  doc.setFillColor(30, 58, 138);
+  doc.rect(margin, y, pageW - margin * 2, 8, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(11);
+  doc.setFont(undefined, 'bold');
+  doc.text('FINANCIAL SUMMARY', margin + 2, y + 6);
+  y += 12;
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(10);
+  const summaryLines = [
+    ['Total Salary Earned (Net):', 'SAR ' + totalEarned.toLocaleString()],
+    ['Total Advances Taken:', 'SAR ' + totalAdvTaken.toLocaleString()],
+    ['Total Advances Repaid:', 'SAR ' + totalAdvPaid.toLocaleString()],
+    ['Outstanding Advance (Baahya):', 'SAR ' + remainingAdv.toLocaleString()],
+  ];
+  summaryLines.forEach(([k, v]) => {
+    doc.setFont(undefined, 'bold'); doc.text(k, margin + 2, y);
+    doc.setFont(undefined, 'normal'); doc.text(v, margin + 100, y);
+    y += 6;
+  });
+
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setTextColor(120, 120, 120);
+    doc.setFontSize(8);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, 290);
+    doc.text(`Page ${i} of ${pageCount}`, pageW - margin, 290, { align: 'right' });
+  }
+
+  doc.save(`History_${e.code}_${e.name.replace(/\s+/g,'_')}.pdf`);
+  toast('History PDF downloaded!');
+}
+
+function sectionHeader(doc, title, y, margin, pageW) {
+  if (y > 260) { doc.addPage(); y = 20; }
+  doc.setDrawColor(30, 58, 138);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y, pageW - margin, y);
+  y += 5;
+  doc.setTextColor(30, 58, 138);
+  doc.setFont(undefined, 'bold');
+  doc.setFontSize(11);
+  doc.text(title, margin, y);
+  y += 6;
+  return y;
+}
+
+/* ============================================================
+   ALL SALARY SUMMARY PDF
+   ============================================================ */
+function downloadAllSalarySummaryPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+  const pageW = 297, margin = 12;
+  let y = 0;
+
+  doc.setFillColor(30, 58, 138);
+  doc.rect(0, 0, pageW, 22, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(14);
+  doc.setFont(undefined, 'bold');
+  doc.text('Star of The Square Services Co. - Employee Salary Summary', pageW / 2, 14, { align: 'center' });
+  y = 30;
+
+  const headers = ['Name', 'Designation', 'Joining', 'Basic', 'Earned', 'Deductions', 'Advances', 'Remaining', 'Net Paid'];
+  const colX = [margin, margin+45, margin+90, margin+115, margin+140, margin+165, margin+190, margin+215, margin+245];
+  doc.setFillColor(241, 245, 249);
+  doc.rect(margin, y, pageW - margin * 2, 8, 'F');
+  doc.setTextColor(30, 58, 138);
+  doc.setFontSize(9);
+  doc.setFont(undefined, 'bold');
+  headers.forEach((h, i) => doc.text(h, colX[i], y + 6));
+  y += 10;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFont(undefined, 'normal');
+  doc.setFontSize(8.5);
+
+  let grandEarned = 0, grandAdv = 0, grandRemaining = 0;
+
+  DB.employees.forEach(emp => {
+    const empPayrolls = DB.payroll.filter(p => p.empId === emp.id);
+    const totalEarned = empPayrolls.reduce((s, p) => s + p.net, 0);
+    const totalDed = empPayrolls.reduce((s, p) => s + p.deductions, 0);
+    const totalAdv = DB.advances.filter(a => a.empId === emp.id).reduce((s, a) => s + a.amount, 0);
+    const remaining = DB.advances.filter(a => a.empId === emp.id && a.status === 'Active')
+      .reduce((s, a) => s + a.remaining, 0);
+
+    grandEarned += totalEarned;
+    grandAdv += totalAdv;
+    grandRemaining += remaining;
+
+    if (y > 195) { doc.addPage(); y = 20; }
+
+    doc.text(emp.name.slice(0, 22), colX[0], y);
+    doc.text((emp.designation || '-').slice(0, 20), colX[1], y);
+    doc.text(String(emp.joining || '-'), colX[2], y);
+    doc.text(Number(emp.basic).toLocaleString(), colX[3], y);
+    doc.text(Number(totalEarned).toLocaleString(), colX[4], y);
+    doc.text(Number(totalDed).toLocaleString(), colX[5], y);
+    doc.text(Number(totalAdv).toLocaleString(), colX[6], y);
+    doc.text(Number(remaining).toLocaleString(), colX[7], y);
+    doc.text(Number(totalEarned).toLocaleString(), colX[8], y);
+    y += 6;
+  });
+
+  y += 4;
+  doc.setDrawColor(30, 58, 138);
+  doc.line(margin, y, pageW - margin, y);
+  y += 6;
+  doc.setFont(undefined, 'bold');
+  doc.setTextColor(30, 58, 138);
+  doc.setFontSize(10);
+  doc.text(`GRAND TOTAL  |  Earned: SAR ${grandEarned.toLocaleString()}  |  Advances: SAR ${grandAdv.toLocaleString()}  |  Remaining: SAR ${grandRemaining.toLocaleString()}`, margin, y);
+
+  doc.setTextColor(120, 120, 120);
+  doc.setFontSize(8);
+  doc.setFont(undefined, 'normal');
+  doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, 205);
+
+  doc.save(`All_Salary_Summary_${new Date().toISOString().slice(0,10)}.pdf`);
+  toast('Summary PDF downloaded!');
+}
+
+/* ============================================================
+   PAYSLIP PDF
    ============================================================ */
 function downloadPayslip(payrollId) {
   const p = DB.payroll.find(x => x.id === payrollId);
@@ -1656,7 +1939,7 @@ function deleteDocument(id) {
 }
 
 /* ============================================================
-   REPORTS + CHART
+   REPORTS
    ============================================================ */
 let deptChart = null;
 function renderReports() {
@@ -1664,20 +1947,16 @@ function renderReports() {
   const total = active.reduce((s, e) =>
     s + e.basic + e.housing + e.transport + e.other, 0);
   document.getElementById('rptPayroll').textContent = fmt(total);
-
   const inc = DB.increments.reduce((s, i) => s + i.amount, 0);
   document.getElementById('rptIncrements').textContent = fmt(inc);
-
   const adv = DB.advances.reduce((s, a) => s + a.amount, 0);
   document.getElementById('rptAdvances').textContent = fmt(adv);
-
   const depts = {};
   active.forEach(e => {
     if (!depts[e.department]) depts[e.department] = { count: 0, total: 0 };
     depts[e.department].count++;
     depts[e.department].total += e.basic + e.housing + e.transport + e.other;
   });
-
   document.getElementById('deptPayrollTable').innerHTML =
     Object.entries(depts).map(([name, d]) => `
       <tr>
@@ -1687,7 +1966,6 @@ function renderReports() {
         <td>${fmt(d.total / d.count)}</td>
       </tr>
     `).join('') || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">No data</td></tr>';
-
   const ctx = document.getElementById('deptChart');
   if (!ctx) return;
   if (deptChart) deptChart.destroy();
@@ -1720,7 +1998,6 @@ function renderAll() {
   renderReports();
 }
 
-// Event listener for month selector change
 document.addEventListener('DOMContentLoaded', () => {
   populatePayrollMonthSelect();
   const sel = document.getElementById('payrollMonthSelect');
