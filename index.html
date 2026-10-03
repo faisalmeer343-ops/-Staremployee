@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Star of The Square Services Co. - EMS v2</title>
-
 <!-- Libraries CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
   :root {
@@ -426,12 +424,17 @@
         </div>
       </section>
 
-      <!-- PAYROLL -->
+      <!-- PAYROLL (Enhanced with Month selection & summary) -->
       <section id="payroll" class="section">
         <div class="card">
           <div class="card-header">
-            <h2>Monthly Payroll - <span id="payrollMonth"></span></h2>
-            <button class="btn btn-success" onclick="generatePayroll()" data-en="⚙️ Generate" data-ar="⚙️ إنشاء">⚙️ Generate</button>
+            <h2>Monthly Payroll - <span id="payrollMonthDisplay"></span></h2>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <select id="payrollMonthSelect" class="form-group" style="padding:8px; border-radius:8px; border:1px solid var(--border);">
+                <!-- options populated by JS -->
+              </select>
+              <button class="btn btn-primary" onclick="generatePayrollForMonth()" data-en="⚙️ Generate for Month" data-ar="⚙️ إنشاء للشهر">⚙️ Generate for Month</button>
+            </div>
           </div>
           <table>
             <thead><tr>
@@ -439,6 +442,22 @@
               <th>Overtime</th><th>Deductions</th><th>Net</th><th>Payslip</th>
             </tr></thead>
             <tbody id="payrollTable"></tbody>
+          </table>
+        </div>
+
+        <!-- NEW: Employee Salary Summary -->
+        <div class="card">
+          <div class="card-header">
+            <h2 data-en="Employee Salary Summary" data-ar="ملخص رواتب الموظفين">Employee Salary Summary</h2>
+            <button class="btn btn-success" onclick="exportSalarySummaryExcel()" data-en="⬇️ Excel" data-ar="⬇️ تصدير">⬇️ Excel</button>
+          </div>
+          <table>
+            <thead><tr>
+              <th>Employee</th><th>Designation</th><th>Joining Date</th>
+              <th>Current Basic</th><th>Total Earned</th><th>Total Deductions</th>
+              <th>Total Advances</th><th>Remaining Advance</th><th>Net Paid (after adv)</th>
+            </tr></thead>
+            <tbody id="salarySummaryTable"></tbody>
           </table>
         </div>
       </section>
@@ -616,6 +635,15 @@ function seedData() {
     { id:1, empId:1, type:'Iqama', expiry:'2026-10-15' },
     { id:2, empId:2, type:'Passport', expiry:'2026-03-20' }
   ];
+  // Seed some payroll for previous months to show trend
+  DB.payroll = [
+    { id: 101, empId:1, month:'2025-11', basic:14000, housing:5000, transport:1500, other:1000, overtime:0, deductions:0, net:21500 },
+    { id: 102, empId:2, month:'2025-11', basic:10000, housing:3000, transport:1000, other:500, overtime:0, deductions:0, net:14500 },
+    { id: 103, empId:1, month:'2025-12', basic:14000, housing:5000, transport:1500, other:1000, overtime:0, deductions:0, net:21500 },
+    { id: 104, empId:2, month:'2025-12', basic:10000, housing:3000, transport:1000, other:500, overtime:0, deductions:0, net:14500 },
+    { id: 105, empId:1, month:'2026-01', basic:15000, housing:5000, transport:1500, other:1000, overtime:0, deductions:0, net:22500 },
+    { id: 106, empId:2, month:'2026-01', basic:10000, housing:3000, transport:1000, other:500, overtime:0, deductions:1000, net:13500 },
+  ];
   save();
 }
 seedData();
@@ -634,6 +662,7 @@ function login() {
   document.getElementById('userRole').textContent = role;
   document.getElementById('userAvatar').textContent = DB.currentUser.name[0].toUpperCase();
   applyLang();
+  populatePayrollMonthSelect();
   renderAll();
   startClock();
 }
@@ -664,7 +693,6 @@ function applyLang() {
     el.textContent = isAr ? el.dataset.ar : el.dataset.en;
   });
 
-  // Page title update based on active section
   const active = document.querySelector('.nav-link.active');
   if (active) {
     const span = active.querySelector('span');
@@ -779,7 +807,6 @@ function renderPayrollChart() {
   const ctx = document.getElementById('payrollChart');
   if (!ctx) return;
 
-  // Last 6 months
   const months = [];
   const totals = [];
   for (let i = 5; i >= 0; i--) {
@@ -954,6 +981,7 @@ function saveEmployee(id) {
   }
   save();
   closeModal();
+  populatePayrollMonthSelect();
   renderAll();
 }
 
@@ -1042,14 +1070,32 @@ function renderAttendance() {
 }
 
 /* ============================================================
-   PAYROLL + PAYSLIP PDF
+   PAYROLL + SALARY SUMMARY (Enhanced)
    ============================================================ */
-function renderPayroll() {
-  const month = new Date().toISOString().slice(0, 7);
-  document.getElementById('payrollMonth').textContent = month;
-  if (DB.payroll.filter(p => p.month === month).length === 0) generatePayroll(true);
 
-  const rows = DB.payroll.filter(p => p.month === month);
+// Populate month selector
+function populatePayrollMonthSelect() {
+  const select = document.getElementById('payrollMonthSelect');
+  if (!select) return;
+  const months = [];
+  for (let i = 0; i < 18; i++) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    months.push(d.toISOString().slice(0, 7));
+  }
+  // Also include any month present in payroll not in last 18
+  DB.payroll.forEach(p => { if (!months.includes(p.month)) months.push(p.month); });
+  months.sort().reverse();
+  const currentVal = select.value || new Date().toISOString().slice(0, 7);
+  select.innerHTML = months.map(m => `<option value="${m}" ${m === currentVal ? 'selected' : ''}>${m}</option>`).join('');
+}
+
+// Render payroll table based on selected month
+function renderPayroll() {
+  const selectedMonth = document.getElementById('payrollMonthSelect')?.value || new Date().toISOString().slice(0, 7);
+  document.getElementById('payrollMonthDisplay').textContent = selectedMonth;
+
+  const rows = DB.payroll.filter(p => p.month === selectedMonth);
   document.getElementById('payrollTable').innerHTML = rows.map(p => `
     <tr>
       <td><strong>${empName(p.empId)}</strong></td>
@@ -1063,25 +1109,141 @@ function renderPayroll() {
         <button class="btn btn-primary btn-sm" onclick="downloadPayslip(${p.id})">📄 PDF</button>
       </td>
     </tr>
-  `).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8;">Click Generate Payroll</td></tr>';
+  `).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8;">No payroll for this month. Click Generate.</td></tr>';
+
+  // Also render salary summary
+  renderSalarySummary();
 }
 
+// Generate payroll for selected month (with carry-over of previous unpaid months)
+function generatePayrollForMonth() {
+  const month = document.getElementById('payrollMonthSelect').value;
+  if (!month) return toast('Select a month', 'error');
+  generatePayrollForMonthInternal(month);
+}
+
+function generatePayrollForMonthInternal(month) {
+  // Remove existing entries for this month
+  DB.payroll = DB.payroll.filter(p => p.month !== month);
+
+  DB.employees.filter(e => e.status === 'Active').forEach(e => {
+    // Standard monthly components
+    let basic = Number(e.basic);
+    let housing = Number(e.housing);
+    let transport = Number(e.transport);
+    let other = Number(e.other);
+    let overtime = 0;
+
+    // Calculate advance deduction for this month
+    const adv = DB.advances.find(a => a.empId === e.id && a.status === 'Active');
+    let deductions = adv ? Number(adv.monthlyDed) : 0;
+
+    // Optional: Carry over unpaid previous month net? Not needed for basic generation.
+    // Instead, we ensure advance deduction reduces remaining.
+
+    // Net for this month
+    let net = basic + housing + transport + other + overtime - deductions;
+
+    DB.payroll.push({
+      id: Date.now() + e.id + Math.random() * 1000,
+      empId: e.id,
+      month: month,
+      basic, housing, transport, other, overtime, deductions,
+      net
+    });
+
+    // Deduct from advance remaining (simulate payment)
+    if (adv) {
+      adv.remaining = Math.max(0, adv.remaining - adv.monthlyDed);
+      if (adv.remaining === 0) adv.status = 'Closed';
+    }
+  });
+
+  save();
+  toast('Payroll generated for ' + month);
+  renderAll();
+  populatePayrollMonthSelect();
+}
+
+// Original generatePayroll (for current month) – kept for compatibility
 function generatePayroll(silent = false) {
   const month = new Date().toISOString().slice(0, 7);
-  DB.payroll = DB.payroll.filter(p => p.month !== month);
-  DB.employees.filter(e => e.status === 'Active').forEach(e => {
-    const adv = DB.advances.find(a => a.empId === e.id && a.status === 'Active');
-    const ded = adv ? Number(adv.monthlyDed) : 0;
-    DB.payroll.push({
-      id: Date.now() + e.id, empId: e.id, month,
-      basic: Number(e.basic), housing: Number(e.housing),
-      transport: Number(e.transport), other: Number(e.other),
-      overtime: 0, deductions: ded,
-      net: Number(e.basic) + Number(e.housing) + Number(e.transport) + Number(e.other) - ded
-    });
+  generatePayrollForMonthInternal(month);
+  if (!silent) toast('Payroll generated for ' + month);
+}
+
+/* ============================================================
+   SALARY SUMMARY (Employee-wise totals)
+   ============================================================ */
+function renderSalarySummary() {
+  const tbody = document.getElementById('salarySummaryTable');
+  if (!tbody) return;
+
+  const summary = DB.employees.map(emp => {
+    const empPayrolls = DB.payroll.filter(p => p.empId === emp.id);
+    const totalEarned = empPayrolls.reduce((sum, p) => sum + p.net, 0);
+    const totalDeductions = empPayrolls.reduce((sum, p) => sum + p.deductions, 0);
+    const totalAdvances = DB.advances.filter(a => a.empId === emp.id).reduce((sum, a) => sum + a.amount, 0);
+    const remainingAdvance = DB.advances.filter(a => a.empId === emp.id && a.status === 'Active')
+      .reduce((sum, a) => sum + a.remaining, 0);
+    const netPaid = totalEarned; // net already after deductions
+    // "kitni salary utha chuka" = total net paid through payroll
+    // "kitni baqyajat" = remaining advance
+    // "company par kitna qarza" = total outstanding advances (remaining)
+    return {
+      id: emp.id,
+      name: emp.name,
+      designation: emp.designation,
+      joining: emp.joining,
+      currentBasic: emp.basic,
+      totalEarned,
+      totalDeductions,
+      totalAdvances,
+      remainingAdvance,
+      netPaid
+    };
   });
-  save();
-  if (!silent) { toast('Payroll generated for ' + month); renderAll(); }
+
+  tbody.innerHTML = summary.map(s => `
+    <tr>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.designation}</td>
+      <td>${s.joining}</td>
+      <td>${fmt(s.currentBasic)}</td>
+      <td>${fmt(s.totalEarned)}</td>
+      <td style="color:var(--danger)">${fmt(s.totalDeductions)}</td>
+      <td>${fmt(s.totalAdvances)}</td>
+      <td style="color:${s.remainingAdvance > 0 ? 'var(--warning)' : 'var(--success)'}">${fmt(s.remainingAdvance)}</td>
+      <td><strong>${fmt(s.netPaid)}</strong></td>
+    </tr>
+  `).join('') || '<tr><td colspan="9" style="text-align:center;color:#94a3b8;">No data</td></tr>';
+}
+
+function exportSalarySummaryExcel() {
+  const data = DB.employees.map(emp => {
+    const empPayrolls = DB.payroll.filter(p => p.empId === emp.id);
+    const totalEarned = empPayrolls.reduce((sum, p) => sum + p.net, 0);
+    const totalDeductions = empPayrolls.reduce((sum, p) => sum + p.deductions, 0);
+    const totalAdvances = DB.advances.filter(a => a.empId === emp.id).reduce((sum, a) => sum + a.amount, 0);
+    const remainingAdvance = DB.advances.filter(a => a.empId === emp.id && a.status === 'Active')
+      .reduce((sum, a) => sum + a.remaining, 0);
+    return {
+      Employee: emp.name,
+      Designation: emp.designation,
+      'Joining Date': emp.joining,
+      'Current Basic': emp.basic,
+      'Total Earned (Net)': totalEarned,
+      'Total Deductions': totalDeductions,
+      'Total Advances': totalAdvances,
+      'Remaining Advance': remainingAdvance,
+      'Net Paid': totalEarned
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Salary Summary');
+  XLSX.writeFile(wb, `Salary_Summary_${new Date().toISOString().slice(0,10)}.xlsx`);
+  toast('Excel downloaded');
 }
 
 /* ============================================================
@@ -1096,7 +1258,6 @@ function downloadPayslip(payrollId) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // Header
   doc.setFillColor(30, 58, 138);
   doc.rect(0, 0, 210, 30, 'F');
   doc.setTextColor(255, 255, 255);
@@ -1107,13 +1268,11 @@ function downloadPayslip(payrollId) {
   doc.setFont(undefined, 'normal');
   doc.text('Employee Management System', 105, 22, { align: 'center' });
 
-  // Title
   doc.setTextColor(30, 58, 138);
   doc.setFontSize(15);
   doc.setFont(undefined, 'bold');
   doc.text('PAYSLIP - ' + p.month, 105, 45, { align: 'center' });
 
-  // Employee info
   doc.setFontSize(11);
   doc.setTextColor(30, 41, 59);
   doc.setFont(undefined, 'normal');
@@ -1143,7 +1302,6 @@ function downloadPayslip(payrollId) {
     doc.setFont(undefined, 'normal'); doc.text(String(v || '-'), 150, y + i * 7);
   });
 
-  // Earnings & Deductions table
   y += infoLeft.length * 7 + 8;
   doc.setFillColor(241, 245, 249);
   doc.rect(14, y, 182, 10, 'F');
@@ -1199,7 +1357,6 @@ function downloadPayslip(payrollId) {
   doc.text('NET SALARY', 16, y + 8);
   doc.text('SAR ' + Number(p.net).toLocaleString(), 175, y + 8);
 
-  // Footer
   doc.setTextColor(100, 116, 139);
   doc.setFontSize(9);
   doc.setFont(undefined, 'normal');
@@ -1280,7 +1437,8 @@ function exportReportsExcel() {
 }
 
 /* ============================================================
-   INCREMENTS / ADVANCES / EXPENSES / DOCUMENTS   ============================================================ */
+   INCREMENTS / ADVANCES / EXPENSES / DOCUMENTS
+   ============================================================ */
 function renderIncrements() {
   document.getElementById('incrementsTable').innerHTML = DB.increments
     .sort((a,b) => new Date(b.date) - new Date(a.date))
@@ -1561,6 +1719,13 @@ function renderAll() {
   renderDocuments();
   renderReports();
 }
+
+// Event listener for month selector change
+document.addEventListener('DOMContentLoaded', () => {
+  populatePayrollMonthSelect();
+  const sel = document.getElementById('payrollMonthSelect');
+  if (sel) sel.addEventListener('change', renderPayroll);
+});
 
 console.log('%c⭐ Star of The Square Services Co. EMS v2.0 Loaded', 'color:#1e3a8a;font-size:16px;font-weight:bold;');
 </script>
